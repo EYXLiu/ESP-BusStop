@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <ArduinoJson.h>
 
 const char* ssid = "Wokwi-GUEST";
 
@@ -14,7 +15,8 @@ void setup() {
     delay(500);
     Serial.print(".");
   }
-  Serial.println("\nConnected");
+  Serial.println("");
+  Serial.println("Connected");
 }
 
 void loop() {
@@ -29,8 +31,17 @@ void loop() {
 
     if (httpResponseCode > 0) {
       String response = http.getString();
+      JsonDocument doc;
+      DeserializationError error = deserializeJson(doc, response);
+      if (error) {
+        Serial.print("Json parse error: ");
+        Serial.println(error.c_str());
+        http.end();
+        return;
+      }
       Serial.println(httpResponseCode);
-      Serial.println(response);
+      String title = doc["title"];
+      Serial.println(title);
       Serial.println("Success");
     } else {
       Serial.print("Error on http request: ");
