@@ -2,10 +2,6 @@ SHELL := /bin/bash
 PIDFILE := .backend.pid
 LOGFILE := .backend.log
 
-ifeq ($(strip $(GOTRANSIT_KEY)),)
-$(error GOTRANSIT_KEY is not set)
-endif
-
 ifeq ($(strip $(MAC_IP)),)
 $(error MAC_IP is not set)
 endif

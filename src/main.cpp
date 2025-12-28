@@ -8,7 +8,6 @@ const char* ssid = "Wokwi-GUEST";
 void setup() {
   Serial.begin(115200);
   Serial.println("Hello, ESP32!");
-  Serial.println(GOTRANSIT_KEY);
   WiFi.begin(ssid);
   Serial.println("Connecting to Wi-Fi");
   while (WiFi.status() != WL_CONNECTED) {
@@ -41,7 +40,7 @@ void loop() {
         return;
       }
       Serial.println(httpResponseCode);
-      String title = doc["health"];
+      String title = doc["key"];
       Serial.println(title);
       Serial.println("Success");
     } else {
