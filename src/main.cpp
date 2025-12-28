@@ -2,12 +2,15 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include <LiquidCrystal_I2C.h>
 
 const char* ssid = "Wokwi-GUEST";
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
   Serial.begin(115200);
   Serial.println("Hello, ESP32!");
+// setup wifi
   WiFi.begin(ssid);
   Serial.println("Connecting to Wi-Fi");
   while (WiFi.status() != WL_CONNECTED) {
@@ -16,6 +19,10 @@ void setup() {
   }
   Serial.println("");
   Serial.println("Connected");
+//setup lcd
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
 }
 
 void loop() {
@@ -39,9 +46,11 @@ void loop() {
         http.end();
         return;
       }
-      Serial.println(httpResponseCode);
+      lcd.setCursor(0, 0);
+      lcd.print(httpResponseCode);
       String title = doc["key"];
-      Serial.println(title);
+      lcd.setCursor(0, 1);
+      lcd.print(title);
       Serial.println("Success");
     } else {
       Serial.print("Error on http request: ");
