@@ -21,6 +21,9 @@ class Schedule {
         const char* getSecondBuffer();
         const char* getBottomBuffer();
         DeserializationError getError();
+        int getLen();
+
+        void Update();
 };
 
 #endif

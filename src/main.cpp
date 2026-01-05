@@ -45,7 +45,15 @@ void loop() {
         http.end();
         return;
       }
-      lcd->LCD_PrintLCD(schedule.getFirstBuffer(), schedule.getSecondBuffer(), "", schedule.getBottomBuffer());
+      int len = schedule.getLen();
+      int threshold = 100;
+      int k = (threshold - 1) / len;
+      int result = len * k;
+      for (int i = 0; i < len; i++) {
+        lcd->LCD_PrintLCD(schedule.getFirstBuffer(), schedule.getSecondBuffer(), "", schedule.getBottomBuffer());
+        schedule.Update();
+        delay(2000);
+      }
       Serial.println("Success");
     } else {
       Serial.print("Error on http request: ");
@@ -55,6 +63,4 @@ void loop() {
   } else {
     Serial.println("Wi-Fi not connected");
   }
-
-  delay(10000);
 }

@@ -14,9 +14,11 @@ Schedule::Schedule(String response, int size) :response(response), error(deseria
         return;
     }
 
+    // honestly don't really need error checking here since the api is written by us but ig best to have a failsafe
     const char* bus = json["upcoming"][0]["BusName"] | "";
     const char* destination = json["upcoming"][0]["Destination"] | "";
     const char* timeFromNow = json["upcoming"][0]["TimeFromNow"] | "";
+    const char* scheduledTime = json["upcoming"][curr]["ScheduledDepartureTime"] | "";
 
 
     snprintf(firstBuffer, size + 1, "%-*s%*s", size - (int)strlen(timeFromNow), bus, (int)strlen(timeFromNow), timeFromNow);
@@ -24,7 +26,7 @@ Schedule::Schedule(String response, int size) :response(response), error(deseria
     strncpy(secondBuffer, destination, size);
     secondBuffer[size] = '\0';
 
-    bottomBuffer[0] = '\0';
+    snprintf(bottomBuffer, size + 1, "%-*s%*s", size - (int)strlen(scheduledTime), bus, (int)strlen(scheduledTime), scheduledTime);
 }
 
 Schedule::~Schedule() {
@@ -47,5 +49,20 @@ const char* Schedule::getBottomBuffer() {
 
 DeserializationError Schedule::getError() {
     return error;
+}
+
+int Schedule::getLen() {
+    return json["upcoming"].size();
+}
+
+void Schedule::Update() {
+    if (json["upcoming"].size() == 0) return;
+
+    curr = (curr + 1) % json["upcoming"].size();
+
+    const char* bus = json["upcoming"][curr]["BusName"] | "";
+    const char* scheduledTime = json["upcoming"][curr]["ScheduledDepartureTime"] | "";
+
+    snprintf(bottomBuffer, size + 1, "%-*s%*s", size - (int)strlen(scheduledTime), bus, (int)strlen(scheduledTime), scheduledTime);
 }
 
