@@ -14,7 +14,7 @@ pip install requirements.txt
 ```
 To get the MAC_IP, on macOS, run `ipconfig getifaddr en0` and that's the MAC_IP  
 Run `export MAC_IP=$(ipconfig getifaddr en0)`  
-Get the BUS_STOP from `localhost:8080/station` (find the station identifier)  
+Get the BUS_STOP from `localhost:8080/station` (find the LocationCode)  
 Run `export BUS_STOP={bus stop ip}`  
 
 Run `make run` to startup the flask backend + create the pio `.elf` and `.bin` files  
