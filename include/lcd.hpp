@@ -15,7 +15,6 @@ class LCD {
         void LCD_Print(const String &s);
         void LCD_PrintLCD(const String &first = "", const String &second = "", const String &third = "", const String &fourth = "");
         void LCD_ClrScr();
-        void LCD_ClrLine(int line);
 };
 
 #endif
