@@ -1,24 +1,26 @@
-#ifndef SCHEDULE_HPP
-#define SCHEDULE_HPP
+#ifndef SCROLLING_HPP
+#define SCROLLING_HPP
 
 #include <ArduinoJson.h>
 
-class Schedule {
+#define MAX_BUFFER 64
+
+class Scrolling {
     private:
-        JsonDocument json;
         DeserializationError error;
         int size;
         char* firstBuffer;
         char* secondBuffer;
-        char* bottomBuffer;
         int curr;
+        int len;
+        char maxBuffer[MAX_BUFFER];
+        bool empty;
         
     public:
-        Schedule(String response, int size);
-        ~Schedule();
+        Scrolling(String response, int size);
+        ~Scrolling();
         const char* getFirstBuffer();
         const char* getSecondBuffer();
-        const char* getBottomBuffer();
         DeserializationError getError();
         int getLen();
 

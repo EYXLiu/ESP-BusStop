@@ -13,7 +13,7 @@ class LCD {
         ~LCD();
         void LCD_SetCursor(uint8_t col, uint8_t row);
         void LCD_Print(const String &s);
-        void LCD_PrintLCD(const String &first, const String &second, const String &third, const String &fourth);
+        void LCD_PrintLCD(const String &first = "", const String &second = "", const String &third = "", const String &fourth = "");
         void LCD_ClrScr();
         void LCD_ClrLine(int line);
 };

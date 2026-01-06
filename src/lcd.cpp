@@ -22,7 +22,7 @@ void LCD::LCD_Print(const String &s) {
         buffer[i] = ' ';
     }
     buffer[lcd_cols] = '\0';
-    lcd.print(s);
+    lcd.print(buffer);
 }
 
 void LCD::LCD_PrintLCD(const String &first, const String &second, const String &third, const String &fourth) {
@@ -30,10 +30,12 @@ void LCD::LCD_PrintLCD(const String &first, const String &second, const String &
     LCD_Print(first);
     LCD_SetCursor(0,1);
     LCD_Print(second);
-    LCD_SetCursor(0,2);
-    LCD_Print(third);
-    LCD_SetCursor(0,3);
-    LCD_Print(fourth);
+    if (lcd_rows > 2) {
+        LCD_SetCursor(0,2);
+        LCD_Print(third);
+        LCD_SetCursor(0,3);
+        LCD_Print(fourth);
+    }
 }
 
 void LCD::LCD_ClrScr() {

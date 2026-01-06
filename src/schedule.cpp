@@ -1,6 +1,6 @@
 #include <schedule.hpp>
 
-Schedule::Schedule(String response, int size) :response(response), error(deserializeJson(json, response)), size(size), curr(0) {
+Schedule::Schedule(String response, int size): error(deserializeJson(json, response)), size(size), curr(0) {
     firstBuffer = new char[size + 1];
     secondBuffer = new char[size + 1];
     bottomBuffer = new char[size + 1];

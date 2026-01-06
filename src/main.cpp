@@ -2,12 +2,14 @@
 #include <WiFi.h>
 #include <lcd.hpp>
 #include <schedule.hpp>
+#include <scrolling.hpp>
 #include <http.hpp>
 
 const char* ssid = "Wokwi-GUEST";
 LCD *lcd;
 LCD *secondaryLcd;
 Schedule* schedule;
+Scrolling* scrolling;
 Http* http;
 
 enum DisplayState {
@@ -21,11 +23,11 @@ DisplayState state = STATE_WIFI_CONNECT;
 
 unsigned long lastFetch = 60000;
 unsigned long lastDisplay = 2000;
+unsigned long lastSecondary = 1000;
 
 constexpr unsigned long FETCH_INTERVAL = 60000;
 constexpr unsigned long DISPLAY_INTERVAL = 2000;
-
-int displayIndex = 0;
+constexpr unsigned long DISPLAY_SECONDARY = 100;
 
 bool fetchSchedule() {
   String response;
@@ -36,16 +38,19 @@ bool fetchSchedule() {
   }
 
   if (schedule) delete schedule;
+  if (scrolling) delete scrolling;
   schedule = new Schedule(response, 20);
+  scrolling = new Scrolling(response, 16);
 
-  if (schedule->getError()) {
+  if (schedule->getError() || scrolling->getError()) {
     Serial.println("schedule failure");
     if (schedule) delete schedule;
+    if (scrolling) delete scrolling;
     schedule = nullptr;
+    scrolling = nullptr;
     return false;
   }
 
-  displayIndex = 0;
   return true;
 }
 
@@ -74,6 +79,7 @@ void loop() {
         state = STATE_FETCH;
       }
       lcd->LCD_PrintLCD("WAITING FOR WIFI", "CONNECTION", "", "");
+      secondaryLcd->LCD_PrintLCD("Waiting", "");
       break;
 
     case STATE_FETCH:
@@ -89,7 +95,7 @@ void loop() {
       break;
 
     case STATE_DISPLAY:
-      if (!schedule || now - lastFetch >= FETCH_INTERVAL) {
+      if (!schedule || !scrolling || now - lastFetch >= FETCH_INTERVAL) {
         state = STATE_FETCH;
         break;
       }
@@ -103,9 +109,16 @@ void loop() {
           "",
           schedule->getBottomBuffer()
         );
-
         schedule->Update();
-        displayIndex = (displayIndex + 1) % schedule->getLen();
+      }
+      if (now - lastSecondary >= DISPLAY_SECONDARY) {
+        lastSecondary = now;
+        
+        secondaryLcd->LCD_PrintLCD(
+          scrolling->getFirstBuffer(),
+          scrolling->getSecondBuffer()
+        );
+        scrolling->Update();
       }
       break;
     
@@ -115,6 +128,10 @@ void loop() {
         "RETRYING...",
         "",
         ""
+      );
+      secondaryLcd->LCD_PrintLCD(
+        "NO DATA",
+        "RETRYING..."
       );
 
       if (now - lastFetch >= FETCH_INTERVAL) {
